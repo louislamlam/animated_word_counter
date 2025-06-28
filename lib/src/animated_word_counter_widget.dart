@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:animated_flip_counter/animated_flip_counter.dart';
 
+import 'improved_animated_flip_counter.dart';
 import 'language_aware_word_counter.dart';
 import 'word_counter_languages.dart';
 
@@ -119,7 +119,7 @@ class _AnimatedWordCounterState extends State<AnimatedWordCounter> {
         Row(
           mainAxisAlignment: widget.counterAlignment,
           children: [
-            AnimatedFlipCounter(
+            ImprovedAnimatedFlipCounter(
               value: _stats.wordCount,
               duration: widget.duration,
               curve: widget.curve,
@@ -128,6 +128,8 @@ class _AnimatedWordCounterState extends State<AnimatedWordCounter> {
               suffix: widget.suffix,
               fractionDigits: widget.fractionDigits,
               thousandSeparator: widget.thousandSeparator,
+              improvedFontRendering: true,
+              supportRtl: true, // Enable RTL support
             ),
           ],
         ),
@@ -216,7 +218,7 @@ class SimpleAnimatedWordCounter extends StatelessWidget {
     final counter = LanguageAwareWordCounter(language: language);
     final wordCount = counter.countWords(text);
 
-    return AnimatedFlipCounter(
+    return ImprovedAnimatedFlipCounter(
       value: wordCount,
       duration: duration,
       curve: curve,
@@ -224,6 +226,8 @@ class SimpleAnimatedWordCounter extends StatelessWidget {
       prefix: prefix,
       suffix: suffix,
       fractionDigits: 0,
+      improvedFontRendering: true,
+      supportRtl: true, // Enable RTL support
     );
   }
 }

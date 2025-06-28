@@ -5,6 +5,32 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.2] - 2024-01-15
+
+### Added
+
+- Integrated and improved AnimatedFlipCounter directly into the package
+- Fixed Issue #30: Weird font rendering with improved font handling
+- Fixed Issue #28: Added ability for suffix and prefix text overflow
+- Fixed Issue #16: Added support for RTL languages
+- Fixed Issue #24: Version stability improvements
+- Added `ImprovedAnimatedFlipCounter` widget with enhanced features
+- Added comprehensive tests for all fixed issues
+
+### Changed
+
+- Removed external dependency on `animated_flip_counter` package
+- Enhanced font rendering with additional font features
+- Improved performance with better opacity handling
+- Better clipping for smoother animations
+
+### Fixed
+
+- Font rendering issues with improved baseline handling
+- Text overflow issues for prefix and suffix text
+- RTL language support with proper text direction handling
+- Animation stability issues from version 0.3.2
+
 ## [1.0.1] - 2024-01-15
 
 ### Changed

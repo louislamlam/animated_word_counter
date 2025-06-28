@@ -248,6 +248,113 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
 
+            const SizedBox(height: 16),
+
+            // New: Showcase fixed issues
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: [
+                    Text(
+                      'Fixed Issues Demo',
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Issue #28: Text overflow support
+                    Text(
+                      'Text Overflow Support (Issue #28):',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    const SizedBox(height: 8),
+
+                    ImprovedAnimatedFlipCounter(
+                      value: _controller.text.length,
+                      textStyle: const TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.purple,
+                      ),
+                      prefix: 'Very long prefix text that might overflow: ',
+                      suffix: ' characters with long suffix text',
+                      maxPrefixWidth: 100,
+                      maxSuffixWidth: 80,
+                      prefixOverflow: TextOverflow.ellipsis,
+                      suffixOverflow: TextOverflow.fade,
+                      improvedFontRendering: true,
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    // Issue #16: RTL support
+                    Text(
+                      'RTL Language Support (Issue #16):',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    const SizedBox(height: 8),
+
+                    Directionality(
+                      textDirection: TextDirection.rtl,
+                      child: ImprovedAnimatedFlipCounter(
+                        value: _controller.text.split(' ').length,
+                        textStyle: const TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.indigo,
+                        ),
+                        prefix: 'كلمات: ',
+                        suffix: ' عدد',
+                        supportRtl: true,
+                        improvedFontRendering: true,
+                      ),
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    // Issue #30: Improved font rendering
+                    Text(
+                      'Improved Font Rendering (Issue #30):',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    const SizedBox(height: 8),
+
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Column(
+                          children: [
+                            const Text('Standard'),
+                            ImprovedAnimatedFlipCounter(
+                              value: 12345.67,
+                              fractionDigits: 2,
+                              textStyle: const TextStyle(fontSize: 20),
+                              improvedFontRendering: false,
+                            ),
+                          ],
+                        ),
+                        Column(
+                          children: [
+                            const Text('Improved'),
+                            ImprovedAnimatedFlipCounter(
+                              value: 12345.67,
+                              fractionDigits: 2,
+                              textStyle: const TextStyle(fontSize: 20),
+                              improvedFontRendering: true,
+                              fontFeatures: const [
+                                FontFeature.tabularFigures(),
+                                FontFeature.liningFigures(),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
             const SizedBox(height: 24),
           ],
         ),

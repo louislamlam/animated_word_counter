@@ -7,11 +7,14 @@ An animated word counter Flutter package that supports multiple languages with c
 ## Features
 
 - 🌍 **Multi-language support**: English, Chinese, Japanese, Korean, Thai, Arabic, Hebrew, Hindi, and auto-detection
-- ✨ **Smooth animations**: Built on animated_flip_counter for beautiful flip animations
+- ✨ **Smooth animations**: Built with improved flip counter that fixes rendering issues
 - 🎨 **Customizable styling**: Full control over text styles, colors, and animations
 - ⏱️ **Real-time counting**: Updates as users type with debouncing support
 - 📊 **Additional statistics**: Character count, line count, paragraph count
 - 🚀 **Easy to use**: Simple API with sensible defaults
+- 🔧 **Fixed Issues**: Resolves font rendering, text overflow, and RTL language issues
+- 🌐 **RTL Support**: Full support for right-to-left languages like Arabic and Hebrew
+- 📝 **Text Overflow**: Smart handling of long prefix and suffix text
 
 ## Supported Languages
 
@@ -200,6 +203,35 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
+### ImprovedAnimatedFlipCounter
+
+For advanced use cases, you can use the improved flip counter directly:
+
+```dart
+ImprovedAnimatedFlipCounter(
+  value: 1234.56,
+  fractionDigits: 2,
+  thousandSeparator: ',',
+  prefix: 'Total: \$',
+  suffix: ' USD',
+  // New features:
+  supportRtl: true, // RTL language support
+  improvedFontRendering: true, // Better font rendering
+  maxSuffixWidth: 100, // Constrain suffix width
+  suffixOverflow: TextOverflow.ellipsis, // Handle overflow
+  fontFeatures: [FontFeature.tabularFigures()], // Custom font features
+)
+```
+
+## Fixed Issues
+
+This package resolves several issues found in the original animated_flip_counter:
+
+- **Issue #30**: Weird font rendering - Fixed with improved font handling and baseline alignment
+- **Issue #28**: Text overflow support - Added `maxPrefixWidth`, `maxSuffixWidth`, and overflow properties
+- **Issue #16**: RTL language support - Added `supportRtl` property for proper right-to-left text handling
+- **Issue #24**: Version stability - Improved animation stability and performance
+
 ## Credits
 
-Built on top of [animated_flip_counter](https://pub.dev/packages/animated_flip_counter) by [Felix Angelov](https://github.com/felangel).
+Originally inspired by [animated_flip_counter](https://pub.dev/packages/animated_flip_counter) by [Felix Angelov](https://github.com/felangel), with significant improvements and bug fixes.
