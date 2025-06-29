@@ -1,6 +1,4 @@
 import 'dart:math' as math;
-import 'dart:ui' show FontFeature;
-
 import 'package:flutter/widgets.dart';
 
 /// An improved animated flip counter widget that fixes issues in the original package.
@@ -160,10 +158,10 @@ class ImprovedAnimatedFlipCounter extends StatelessWidget {
 
     // Build improved font features for better rendering
     final List<FontFeature> appliedFontFeatures = [
-      FontFeature.tabularFigures(),
+      const FontFeature.tabularFigures(),
       if (improvedFontRendering) ...[
-        FontFeature.liningFigures(),
-        FontFeature.proportionalFigures(),
+        const FontFeature.liningFigures(),
+        const FontFeature.proportionalFigures(),
       ],
       ...?fontFeatures,
     ];
@@ -275,6 +273,8 @@ class ImprovedAnimatedFlipCounter extends StatelessWidget {
               child: Text(
                 prefix!,
                 overflow: prefixOverflow ?? TextOverflow.ellipsis,
+                maxLines: 1,
+                softWrap: false,
               ),
             )
           : Text(prefix!);
@@ -289,6 +289,8 @@ class ImprovedAnimatedFlipCounter extends StatelessWidget {
               child: Text(
                 suffix!,
                 overflow: suffixOverflow ?? TextOverflow.ellipsis,
+                maxLines: 1,
+                softWrap: false,
               ),
             )
           : Text(suffix!);
@@ -416,14 +418,14 @@ class _ImprovedSingleDigitFlipCounter extends StatelessWidget {
     final Widget child;
     final clampedOpacity = opacity.clamp(0.0, 1.0);
 
-    if (improvedRendering && color.opacity == 1) {
+    if (improvedRendering && color.a == 255) {
       // If the text style does not involve transparency, we can modify
       // the text color directly for better performance.
       child = Text(
         '$digit',
         textAlign: TextAlign.center,
         style: TextStyle(
-          color: color.withOpacity(clampedOpacity),
+          color: color.withValues(alpha: clampedOpacity),
           // Additional improvements for font rendering
           height: 1.0, // Consistent line height
         ),

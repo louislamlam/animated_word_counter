@@ -74,7 +74,7 @@ class AnimatedWordCounter extends StatefulWidget {
 
 class _AnimatedWordCounterState extends State<AnimatedWordCounter> {
   late LanguageAwareWordCounter _counter;
-  late WordCountStats _stats;
+  WordCountStats? _stats;
 
   @override
   void initState() {
@@ -99,12 +99,13 @@ class _AnimatedWordCounterState extends State<AnimatedWordCounter> {
 
   void _updateStats() {
     final newStats = _counter.getStats(widget.text);
-    if (_stats.wordCount != newStats.wordCount ||
-        _stats.characterCount != newStats.characterCount) {
+    if (_stats == null ||
+        _stats!.wordCount != newStats.wordCount ||
+        _stats!.characterCount != newStats.characterCount) {
       setState(() {
         _stats = newStats;
       });
-      widget.onCountChanged?.call(_stats);
+      widget.onCountChanged?.call(_stats!);
     } else {
       _stats = newStats;
     }
@@ -112,6 +113,10 @@ class _AnimatedWordCounterState extends State<AnimatedWordCounter> {
 
   @override
   Widget build(BuildContext context) {
+    if (_stats == null) {
+      return const SizedBox.shrink(); // Return empty widget if stats not ready
+    }
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -120,7 +125,7 @@ class _AnimatedWordCounterState extends State<AnimatedWordCounter> {
           mainAxisAlignment: widget.counterAlignment,
           children: [
             ImprovedAnimatedFlipCounter(
-              value: _stats.wordCount,
+              value: _stats!.wordCount,
               duration: widget.duration,
               curve: widget.curve,
               textStyle: widget.textStyle ?? _defaultTextStyle(context),
@@ -144,6 +149,7 @@ class _AnimatedWordCounterState extends State<AnimatedWordCounter> {
   }
 
   Widget _buildStatsRow(BuildContext context) {
+    final stats = _stats!; // Safe to use ! since build method checks for null
     final defaultStatsStyle =
         widget.statsTextStyle ?? _defaultStatsTextStyle(context);
 
@@ -153,20 +159,20 @@ class _AnimatedWordCounterState extends State<AnimatedWordCounter> {
       runSpacing: 4,
       children: [
         _buildStatItem(
-          'Characters: ${_stats.characterCount}',
+          'Characters: ${stats.characterCount}',
           defaultStatsStyle,
         ),
         _buildStatItem(
-          'Characters (no spaces): ${_stats.characterCountNoSpaces}',
+          'Characters (no spaces): ${stats.characterCountNoSpaces}',
           defaultStatsStyle,
         ),
         _buildStatItem(
-          'Lines: ${_stats.lineCount}',
+          'Lines: ${stats.lineCount}',
           defaultStatsStyle,
         ),
-        if (_stats.paragraphCount > 1)
+        if (stats.paragraphCount > 1)
           _buildStatItem(
-            'Paragraphs: ${_stats.paragraphCount}',
+            'Paragraphs: ${stats.paragraphCount}',
             defaultStatsStyle,
           ),
         _buildStatItem(

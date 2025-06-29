@@ -226,14 +226,14 @@ class _MyHomePageState extends State<MyHomePage> {
                     AnimatedWordCounter(
                       text: _controller.text,
                       language: _selectedLanguage,
-                      textStyle: TextStyle(
+                      textStyle: const TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.bold,
                         color: Colors.orange,
                         shadows: [
                           Shadow(
-                            color: Colors.orange.withOpacity(0.3),
-                            offset: const Offset(2, 2),
+                            color: Colors.orange,
+                            offset: Offset(2, 2),
                             blurRadius: 4,
                           ),
                         ],
@@ -319,29 +319,29 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                     const SizedBox(height: 8),
 
-                    Row(
+                    const Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         Column(
                           children: [
-                            const Text('Standard'),
+                            Text('Standard'),
                             ImprovedAnimatedFlipCounter(
                               value: 12345.67,
                               fractionDigits: 2,
-                              textStyle: const TextStyle(fontSize: 20),
+                              textStyle: TextStyle(fontSize: 20),
                               improvedFontRendering: false,
                             ),
                           ],
                         ),
                         Column(
                           children: [
-                            const Text('Improved'),
+                            Text('Improved'),
                             ImprovedAnimatedFlipCounter(
                               value: 12345.67,
                               fractionDigits: 2,
-                              textStyle: const TextStyle(fontSize: 20),
+                              textStyle: TextStyle(fontSize: 20),
                               improvedFontRendering: true,
-                              fontFeatures: const [
+                              fontFeatures: [
                                 FontFeature.tabularFigures(),
                                 FontFeature.liningFigures(),
                               ],

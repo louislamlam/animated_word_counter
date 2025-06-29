@@ -58,43 +58,43 @@ class LanguageConfig {
     WordCounterLanguage.japanese: LanguageConfig(
       language: WordCounterLanguage.japanese,
       name: 'Japanese',
-      description: 'Mixed script counting',
+      description: 'Character-based counting',
       countFunction: _countJapanese,
     ),
     WordCounterLanguage.korean: LanguageConfig(
       language: WordCounterLanguage.korean,
       name: 'Korean',
-      description: 'Hangul-based counting',
+      description: 'Character-based counting',
       countFunction: _countKorean,
     ),
     WordCounterLanguage.thai: LanguageConfig(
       language: WordCounterLanguage.thai,
       name: 'Thai',
-      description: 'Thai script counting',
+      description: 'Character-based counting',
       countFunction: _countThai,
     ),
     WordCounterLanguage.arabic: LanguageConfig(
       language: WordCounterLanguage.arabic,
       name: 'Arabic',
-      description: 'Arabic script counting',
+      description: 'Space-separated words',
       countFunction: _countArabic,
     ),
     WordCounterLanguage.hebrew: LanguageConfig(
       language: WordCounterLanguage.hebrew,
       name: 'Hebrew',
-      description: 'Hebrew script counting',
+      description: 'Space-separated words',
       countFunction: _countHebrew,
     ),
     WordCounterLanguage.hindi: LanguageConfig(
       language: WordCounterLanguage.hindi,
       name: 'Hindi',
-      description: 'Devanagari script counting',
+      description: 'Space-separated words',
       countFunction: _countHindi,
     ),
     WordCounterLanguage.auto: LanguageConfig(
       language: WordCounterLanguage.auto,
       name: 'Auto-detect',
-      description: 'Automatically detect language',
+      description: 'Automatic language detection',
       countFunction: _countAuto,
     ),
   };
@@ -104,6 +104,28 @@ class LanguageConfig {
     return configs[language] ?? configs[WordCounterLanguage.auto]!;
   }
 
+  // Performance threshold: use regex for short texts, runes for longer texts
+  static const int _performanceThreshold = 50;
+
+  /// Improved CJK character detection with correct Unicode ranges
+  // static bool _isCJKCharacter(int rune) {
+  //   return (rune >= 0x4E00 && rune <= 0x9FFF) || // CJK Unified Ideographs
+  //       (rune >= 0x3040 && rune <= 0x309F) || // Hiragana
+  //       (rune >= 0x30A0 && rune <= 0x30FF) || // Katakana
+  //       (rune >= 0xAC00 && rune <= 0xD7A3) || // Hangul Syllables (CORRECTED!)
+  //       (rune >= 0x1100 && rune <= 0x11FF) || // Hangul Jamo
+  //       (rune >= 0x3130 && rune <= 0x318F); // Hangul Compatibility Jamo
+  // }
+
+  /// Fast character type detection for short texts
+  static bool _hasChineseRegex(String text) =>
+      RegExp(r'[\u4e00-\u9fff]').hasMatch(text);
+  static bool _hasJapaneseRegex(String text) =>
+      RegExp(r'[\u3040-\u309f\u30a0-\u30ff]').hasMatch(text);
+  static bool _hasKoreanRegex(String text) =>
+      RegExp(r'[\uac00-\ud7a3\u1100-\u11ff\u3130-\u318f]')
+          .hasMatch(text); // FIXED RANGE
+
   // Word counting functions for different languages
   static int _countSpaceSeparated(String text) {
     if (text.trim().isEmpty) return 0;
@@ -112,44 +134,88 @@ class LanguageConfig {
 
   static int _countChinese(String text) {
     if (text.trim().isEmpty) return 0;
-    // Count Chinese characters (CJK Unified Ideographs)
-    final chineseChars = RegExp(r'[\u4e00-\u9fff]');
-    final matches = chineseChars.allMatches(text);
-    return matches.length;
+
+    if (text.length < _performanceThreshold) {
+      // Use regex for short texts
+      return RegExp(r'[\u4e00-\u9fff]').allMatches(text).length;
+    } else {
+      // Use rune checking for longer texts (better performance)
+      int count = 0;
+      for (int rune in text.runes) {
+        if (rune >= 0x4E00 && rune <= 0x9FFF) count++;
+      }
+      return count;
+    }
   }
 
   static int _countJapanese(String text) {
     if (text.trim().isEmpty) return 0;
-    // Count Japanese characters (Hiragana, Katakana, and Kanji)
-    final japaneseChars = RegExp(r'[\u3040-\u309f\u30a0-\u30ff\u4e00-\u9fff]');
-    final matches = japaneseChars.allMatches(text);
 
-    // Also handle mixed text with spaces
-    final spaceSeparated = text.trim().split(RegExp(r'\s+'));
-    final nonJapaneseWords = spaceSeparated
-        .where((word) => !japaneseChars.hasMatch(word) && word.isNotEmpty)
-        .length;
+    if (text.length < _performanceThreshold) {
+      // Use regex for short texts (better performance for Japanese)
+      final japaneseChars =
+          RegExp(r'[\u3040-\u309f\u30a0-\u30ff\u4e00-\u9fff]');
+      final matches = japaneseChars.allMatches(text);
 
-    return matches.length + nonJapaneseWords;
+      final spaceSeparated = text.trim().split(RegExp(r'\s+'));
+      final nonJapaneseWords = spaceSeparated
+          .where((word) => !japaneseChars.hasMatch(word) && word.isNotEmpty)
+          .length;
+
+      return matches.length + nonJapaneseWords;
+    } else {
+      // Use rune checking for longer texts
+      int cjkCount = 0;
+      final List<String> words = text.trim().split(RegExp(r'\s+'));
+      int nonCjkWords = 0;
+
+      for (String word in words) {
+        if (word.isEmpty) continue;
+
+        bool hasCjk = false;
+        for (int rune in word.runes) {
+          if ((rune >= 0x3040 && rune <= 0x309F) || // Hiragana
+              (rune >= 0x30A0 && rune <= 0x30FF) || // Katakana
+              (rune >= 0x4E00 && rune <= 0x9FFF)) {
+            // Kanji
+            cjkCount++;
+            hasCjk = true;
+          }
+        }
+
+        if (!hasCjk && word.isNotEmpty) {
+          nonCjkWords++;
+        }
+      }
+
+      return cjkCount + nonCjkWords;
+    }
   }
 
   static int _countKorean(String text) {
     if (text.trim().isEmpty) return 0;
-    // Count Korean characters (Hangul)
-    final koreanChars = RegExp(r'[\uac00-\ud7af\u1100-\u11ff\u3130-\u318f]');
 
-    // Split by spaces and count Korean syllables and non-Korean words
-    final words = text.trim().split(RegExp(r'\s+'));
+    // Always use the corrected Unicode range with rune checking
     int count = 0;
+    final List<String> words = text.trim().split(RegExp(r'\s+'));
 
-    for (final word in words) {
+    for (String word in words) {
       if (word.isEmpty) continue;
-      if (koreanChars.hasMatch(word)) {
-        // Count Korean syllables
-        count += koreanChars.allMatches(word).length;
-      } else {
-        // Count as one word for non-Korean text
-        count += 1;
+
+      bool hasKorean = false;
+      for (int rune in word.runes) {
+        if ((rune >= 0xAC00 &&
+                rune <= 0xD7A3) || // Hangul Syllables (CORRECTED!)
+            (rune >= 0x1100 && rune <= 0x11FF) || // Hangul Jamo
+            (rune >= 0x3130 && rune <= 0x318F)) {
+          // Hangul Compatibility Jamo
+          count++;
+          hasKorean = true;
+        }
+      }
+
+      if (!hasKorean && word.isNotEmpty) {
+        count++;
       }
     }
 
@@ -198,31 +264,87 @@ class LanguageConfig {
   static int _countAuto(String text) {
     if (text.trim().isEmpty) return 0;
 
-    // Auto-detect language based on character patterns
-    final chineseChars = RegExp(r'[\u4e00-\u9fff]');
-    final japaneseChars = RegExp(r'[\u3040-\u309f\u30a0-\u30ff]');
-    final koreanChars = RegExp(r'[\uac00-\ud7af\u1100-\u11ff\u3130-\u318f]');
-    final thaiChars = RegExp(r'[\u0e00-\u0e7f]');
-    final arabicChars = RegExp(r'[\u0600-\u06ff]');
-    final hebrewChars = RegExp(r'[\u0590-\u05ff]');
-    final hindiChars = RegExp(r'[\u0900-\u097f]');
+    // Quick detection for short texts
+    if (text.length < _performanceThreshold) {
+      if (_hasJapaneseRegex(text)) {
+        return _countJapanese(text);
+      } else if (_hasKoreanRegex(text)) {
+        return _countKorean(text);
+      } else if (_hasChineseRegex(text)) {
+        return _countChinese(text);
+      } else {
+        // Check other languages with regex
+        final thaiChars = RegExp(r'[\u0e00-\u0e7f]');
+        final arabicChars = RegExp(r'[\u0600-\u06ff]');
+        final hebrewChars = RegExp(r'[\u0590-\u05ff]');
+        final hindiChars = RegExp(r'[\u0900-\u097f]');
 
-    // Count different script types
-    final chineseCount = chineseChars.allMatches(text).length;
-    final japaneseCount = japaneseChars.allMatches(text).length;
-    final koreanCount = koreanChars.allMatches(text).length;
-    final thaiCount = thaiChars.allMatches(text).length;
-    final arabicCount = arabicChars.allMatches(text).length;
-    final hebrewCount = hebrewChars.allMatches(text).length;
-    final hindiCount = hindiChars.allMatches(text).length;
+        if (thaiChars.hasMatch(text)) {
+          return _countThai(text);
+        } else if (arabicChars.hasMatch(text)) {
+          return _countArabic(text);
+        } else if (hebrewChars.hasMatch(text)) {
+          return _countHebrew(text);
+        } else if (hindiChars.hasMatch(text)) {
+          return _countHindi(text);
+        } else {
+          return _countSpaceSeparated(text);
+        }
+      }
+    }
 
-    // Determine predominant script
-    if (chineseCount > 0 && chineseCount >= japaneseCount) {
-      return _countChinese(text);
-    } else if (japaneseCount > 0) {
+    // Detailed analysis for longer texts using improved CJK detection
+    int chineseCount = 0;
+    int japaneseSpecificCount = 0;
+    int koreanCount = 0;
+    int thaiCount = 0;
+    int arabicCount = 0;
+    int hebrewCount = 0;
+    int hindiCount = 0;
+
+    for (int rune in text.runes) {
+      if (rune >= 0x4E00 && rune <= 0x9FFF) {
+        chineseCount++;
+      }
+      if ((rune >= 0x3040 && rune <= 0x309F) || // Hiragana
+          (rune >= 0x30A0 && rune <= 0x30FF)) {
+        // Katakana
+        japaneseSpecificCount++;
+      }
+      if ((rune >= 0xAC00 && rune <= 0xD7A3) || // Hangul Syllables (CORRECTED!)
+          (rune >= 0x1100 && rune <= 0x11FF) || // Hangul Jamo
+          (rune >= 0x3130 && rune <= 0x318F)) {
+        // Hangul Compatibility Jamo
+        koreanCount++;
+      }
+      if (rune >= 0x0E00 && rune <= 0x0E7F) {
+        // Thai
+        thaiCount++;
+      }
+      if (rune >= 0x0600 && rune <= 0x06FF) {
+        // Arabic
+        arabicCount++;
+      }
+      if (rune >= 0x0590 && rune <= 0x05FF) {
+        // Hebrew
+        hebrewCount++;
+      }
+      if (rune >= 0x0900 && rune <= 0x097F) {
+        // Hindi
+        hindiCount++;
+      }
+    }
+
+    // Determine language based on character distribution
+    if (japaneseSpecificCount > 0) {
+      // Has Hiragana/Katakana, definitely Japanese
       return _countJapanese(text);
     } else if (koreanCount > 0) {
+      // Has Korean characters
       return _countKorean(text);
+    } else if (chineseCount > 0) {
+      // Has Chinese characters (no Hiragana/Katakana)
+      return _countChinese(text);
     } else if (thaiCount > 0) {
       return _countThai(text);
     } else if (arabicCount > 0) {
@@ -232,7 +354,7 @@ class LanguageConfig {
     } else if (hindiCount > 0) {
       return _countHindi(text);
     } else {
-      // Default to space-separated counting
+      // No special scripts, use space-separated counting
       return _countSpaceSeparated(text);
     }
   }

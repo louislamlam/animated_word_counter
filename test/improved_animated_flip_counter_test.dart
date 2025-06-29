@@ -101,11 +101,11 @@ void main() {
       testWidgets('supports RTL text direction (Issue #16)',
           (WidgetTester tester) async {
         await tester.pumpWidget(
-          MaterialApp(
+          const MaterialApp(
             home: Scaffold(
               body: Directionality(
                 textDirection: TextDirection.rtl,
-                child: const ImprovedAnimatedFlipCounter(
+                child: ImprovedAnimatedFlipCounter(
                   value: 42,
                   prefix: 'عدد: ',
                   suffix: ' كلمة',

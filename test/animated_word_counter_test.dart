@@ -20,9 +20,10 @@ void main() {
           LanguageAwareWordCounter(language: WordCounterLanguage.chinese);
 
       expect(counter.countWords(''), 0);
-      expect(counter.countWords('你好'), 10);
-      expect(counter.countWords('这是一个中文文本示例'), 9);
-      expect(counter.countWords('春天来了，花儿开放了'), 10);
+      expect(counter.countWords('你好'), 2);
+      expect(counter.countWords('这是一个中文文本示例'), 10);
+      expect(counter.countWords('春天来了，花儿开放了'),
+          9); // 9 Chinese characters (comma is punctuation)
     });
 
     test('counts Japanese text correctly', () {

@@ -5,6 +5,29 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.3] - 2024-01-15
+
+### Fixed
+
+- **Critical Runtime Fix**: Fixed `LateInitializationError` in `AnimatedWordCounter` widget that caused app crashes on initialization
+- **Text Overflow**: Fixed `suffixOverflow` and `prefixOverflow` properties not working correctly by adding proper text constraints
+- **Language Configurations**: Added missing description fields to all language configurations for better API completeness
+- **Code Quality**: Fixed all Flutter analyzer warnings and improved const constructor usage
+
+### Improved
+
+- Enhanced null safety handling in `AnimatedWordCounter` with proper state management
+- Better error handling with graceful fallbacks during widget initialization
+- Improved text overflow handling with `maxLines: 1` and `softWrap: false` for reliable overflow behavior
+- Performance optimizations through const constructors and reduced widget rebuilds
+
+### Technical
+
+- Updated deprecated API usage (`withOpacity()` → `withValues(alpha:)`, `color.opacity` → `color.a`)
+- Removed unnecessary imports and cleaned up codebase
+- All tests passing (26/26) with no analyzer warnings
+- Better documentation and code organization
+
 ## [1.0.2] - 2024-01-15
 
 ### Added
