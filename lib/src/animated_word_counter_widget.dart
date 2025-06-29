@@ -123,18 +123,21 @@ class _AnimatedWordCounterState extends State<AnimatedWordCounter> {
         // Main counter
         Row(
           mainAxisAlignment: widget.counterAlignment,
+          mainAxisSize: MainAxisSize.min,
           children: [
-            ImprovedAnimatedFlipCounter(
-              value: _stats!.wordCount,
-              duration: widget.duration,
-              curve: widget.curve,
-              textStyle: widget.textStyle ?? _defaultTextStyle(context),
-              prefix: widget.prefix,
-              suffix: widget.suffix,
-              fractionDigits: widget.fractionDigits,
-              thousandSeparator: widget.thousandSeparator,
-              improvedFontRendering: true,
-              supportRtl: true, // Enable RTL support
+            Flexible(
+              child: ImprovedAnimatedFlipCounter(
+                value: _stats!.wordCount,
+                duration: widget.duration,
+                curve: widget.curve,
+                textStyle: widget.textStyle ?? _defaultTextStyle(context),
+                prefix: widget.prefix,
+                suffix: widget.suffix,
+                fractionDigits: widget.fractionDigits,
+                thousandSeparator: widget.thousandSeparator,
+                improvedFontRendering: true,
+                supportRtl: true, // Enable RTL support
+              ),
             ),
           ],
         ),
@@ -224,16 +227,23 @@ class SimpleAnimatedWordCounter extends StatelessWidget {
     final counter = LanguageAwareWordCounter(language: language);
     final wordCount = counter.countWords(text);
 
-    return ImprovedAnimatedFlipCounter(
-      value: wordCount,
-      duration: duration,
-      curve: curve,
-      textStyle: textStyle,
-      prefix: prefix,
-      suffix: suffix,
-      fractionDigits: 0,
-      improvedFontRendering: true,
-      supportRtl: true, // Enable RTL support
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Flexible(
+          child: ImprovedAnimatedFlipCounter(
+            value: wordCount,
+            duration: duration,
+            curve: curve,
+            textStyle: textStyle,
+            prefix: prefix,
+            suffix: suffix,
+            fractionDigits: 0,
+            improvedFontRendering: true,
+            supportRtl: true, // Enable RTL support
+          ),
+        ),
+      ],
     );
   }
 }

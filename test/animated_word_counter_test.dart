@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:animated_word_counter/animated_word_counter.dart';
 
@@ -160,6 +161,116 @@ void main() {
       expect(map['lineCount'], 2);
       expect(map['paragraphCount'], 1);
       expect(map['language'], 'english');
+    });
+  });
+
+  group('Layout constraints tests', () {
+    testWidgets('should work in Row with Spacer without layout errors',
+        (WidgetTester tester) async {
+      // This test verifies the fix for unbounded width constraints
+      // when AnimatedWordCounter is used in a Row with Spacer()
+
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: SizedBox(
+              width: 300,
+              child: Row(
+                children: [
+                  Text('Words:'),
+                  Spacer(),
+                  AnimatedWordCounter(
+                    text: 'hello world test',
+                    suffix: ' words',
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+
+      // Wait for the widget to initialize
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      // Verify the widget renders without errors
+      expect(find.byType(AnimatedWordCounter), findsOneWidget);
+      expect(find.text('3'), findsOneWidget);
+      expect(find.textContaining('words'), findsOneWidget);
+    });
+
+    testWidgets('SimpleAnimatedWordCounter should work in Row with Spacer',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: SizedBox(
+              width: 300,
+              child: Row(
+                children: [
+                  Text('Count:'),
+                  Spacer(),
+                  SimpleAnimatedWordCounter(
+                    text: 'hello world',
+                    suffix: ' words',
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      expect(find.byType(SimpleAnimatedWordCounter), findsOneWidget);
+      expect(find.text('2'), findsOneWidget);
+    });
+
+    testWidgets('should handle basic layout scenarios',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: SizedBox(
+              width: 500,
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Text('Simple row:'),
+                      Spacer(),
+                      SimpleAnimatedWordCounter(
+                        text: 'test text',
+                        suffix: ' words',
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 20),
+                  Row(
+                    children: [
+                      Text('With stats:'),
+                      Spacer(),
+                      AnimatedWordCounter(
+                        text: 'short text',
+                        showStats: false,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      expect(find.byType(SimpleAnimatedWordCounter), findsOneWidget);
+      expect(find.byType(AnimatedWordCounter), findsOneWidget);
     });
   });
 }

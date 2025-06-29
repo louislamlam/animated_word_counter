@@ -1,6 +1,6 @@
 name: animated_word_counter
 description: An animated word counter widget that supports multiple languages with customizable styling, built on animated_flip_counter.
-version: 1.0.3
+version: 1.0.4
 homepage: https://github.com/louislamlam/animated_word_counter
 
 environment:

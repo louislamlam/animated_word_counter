@@ -5,6 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.4] - 2024-01-15
+
+### Fixed
+
+- **Layout Constraints**: Fixed "RenderFlex overflowed" errors when `AnimatedWordCounter` is used in a `Row` with `Spacer()` widgets
+- **Widget Constraints**: Resolved unbounded width constraint issues by wrapping `ImprovedAnimatedFlipCounter` in `Flexible` widgets
+- **Layout Compatibility**: Improved compatibility with `Expanded`, `Flexible`, and other layout widgets
+
+### Improved
+
+- Better handling of constrained layouts in complex widget trees
+- Enhanced widget sizing behavior in responsive layouts
+- Added comprehensive test coverage for layout constraint scenarios
+
+### Technical
+
+- Replaced problematic `IntrinsicWidth` approach with `Flexible` wrapper pattern
+- Added `mainAxisSize: MainAxisSize.min` to internal Row widgets for better space management
+- Fixed const constructor warnings in test files
+- All tests passing (29/29) with comprehensive layout scenario coverage
+
 ## [1.0.3] - 2024-01-15
 
 ### Fixed
