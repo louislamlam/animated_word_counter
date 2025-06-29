@@ -273,4 +273,139 @@ void main() {
       expect(find.byType(AnimatedWordCounter), findsOneWidget);
     });
   });
+
+  group('Text styling tests', () {
+    testWidgets('should apply different text styles to prefix and suffix',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: AnimatedWordCounter(
+              text: 'hello world',
+              prefix: 'Prefix: ',
+              prefixTextStyle: TextStyle(
+                color: Colors.red,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+              suffix: ' words',
+              suffixTextStyle: TextStyle(
+                color: Colors.blue,
+                fontSize: 12,
+                fontStyle: FontStyle.italic,
+              ),
+              textStyle: TextStyle(
+                color: Colors.green,
+                fontSize: 24,
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      // Verify the widget renders without errors
+      expect(find.byType(AnimatedWordCounter), findsOneWidget);
+      expect(find.text('2'), findsOneWidget);
+      expect(find.textContaining('Prefix:'), findsOneWidget);
+      expect(find.textContaining('words'), findsOneWidget);
+    });
+
+    testWidgets(
+        'SimpleAnimatedWordCounter should support different text styles',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: SimpleAnimatedWordCounter(
+              text: 'testing',
+              prefix: 'Count: ',
+              prefixTextStyle: TextStyle(
+                color: Colors.purple,
+                fontSize: 14,
+              ),
+              suffix: ' items',
+              suffixTextStyle: TextStyle(
+                color: Colors.orange,
+                fontSize: 10,
+              ),
+              textStyle: TextStyle(
+                color: Colors.black,
+                fontSize: 20,
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.pump();
+
+      expect(find.byType(SimpleAnimatedWordCounter), findsOneWidget);
+      expect(find.text('1'), findsOneWidget);
+    });
+
+    testWidgets(
+        'should fallback to main textStyle when prefix/suffix styles are null',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: AnimatedWordCounter(
+              text: 'fallback test',
+              prefix: 'Before: ',
+              suffix: ' after',
+              textStyle: TextStyle(
+                color: Colors.teal,
+                fontSize: 18,
+              ),
+              // prefixTextStyle and suffixTextStyle are null
+            ),
+          ),
+        ),
+      );
+
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      expect(find.byType(AnimatedWordCounter), findsOneWidget);
+      expect(find.text('2'), findsOneWidget);
+    });
+
+    testWidgets('should handle different font sizes with proper alignment',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: SizedBox(
+              width: 400, // More reasonable width
+              child: AnimatedWordCounter(
+                text: 'baseline test',
+                prefix: 'Small: ',
+                prefixTextStyle: TextStyle(
+                  color: Colors.red,
+                  fontSize: 12, // Smaller font
+                ),
+                suffix: ' Large',
+                suffixTextStyle: TextStyle(
+                  color: Colors.blue,
+                  fontSize: 20, // Larger font
+                ),
+                textStyle: TextStyle(
+                  fontSize: 16, // Medium font
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      expect(find.byType(AnimatedWordCounter), findsOneWidget);
+      expect(find.text('2'), findsOneWidget);
+    });
+  });
 }

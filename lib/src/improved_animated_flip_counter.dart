@@ -35,12 +35,20 @@ class ImprovedAnimatedFlipCounter extends StatelessWidget {
   /// Optional text to display before the counter. e.g. `$` + `-100` = `$-100`.
   final String? prefix;
 
+  /// If non-null, the style to use for the prefix text.
+  /// If null, uses the main [textStyle].
+  final TextStyle? prefixTextStyle;
+
   /// Optional text to display before the counter, but after the negative
   /// sign if it's present. e.g. insert `$` to `-100` results in `-$100`.
   final String? infix;
 
   /// Optional text to display after the counter.
   final String? suffix;
+
+  /// If non-null, the style to use for the suffix text.
+  /// If null, uses the main [textStyle].
+  final TextStyle? suffixTextStyle;
 
   /// Text overflow behavior for the suffix text.
   /// Fix for issue #28: Add ability for suffix textOverflow
@@ -131,8 +139,10 @@ class ImprovedAnimatedFlipCounter extends StatelessWidget {
     this.curve = Curves.linear,
     this.textStyle,
     this.prefix,
+    this.prefixTextStyle,
     this.infix,
     this.suffix,
+    this.suffixTextStyle,
     this.suffixOverflow,
     this.prefixOverflow,
     this.fractionDigits = 0,
@@ -267,33 +277,43 @@ class ImprovedAnimatedFlipCounter extends StatelessWidget {
     // Build prefix widget with overflow support
     Widget? prefixWidget;
     if (prefix != null) {
+      final prefixStyle = prefixTextStyle != null
+          ? DefaultTextStyle.of(context).style.merge(prefixTextStyle)
+          : style;
+
       prefixWidget = maxPrefixWidth != null
           ? SizedBox(
               width: maxPrefixWidth,
               child: Text(
                 prefix!,
+                style: prefixStyle,
                 overflow: prefixOverflow ?? TextOverflow.ellipsis,
                 maxLines: 1,
                 softWrap: false,
               ),
             )
-          : Text(prefix!);
+          : Text(prefix!, style: prefixStyle);
     }
 
     // Build suffix widget with overflow support
     Widget? suffixWidget;
     if (suffix != null) {
+      final suffixStyle = suffixTextStyle != null
+          ? DefaultTextStyle.of(context).style.merge(suffixTextStyle)
+          : style;
+
       suffixWidget = maxSuffixWidth != null
           ? SizedBox(
               width: maxSuffixWidth,
               child: Text(
                 suffix!,
+                style: suffixStyle,
                 overflow: suffixOverflow ?? TextOverflow.ellipsis,
                 maxLines: 1,
                 softWrap: false,
               ),
             )
-          : Text(suffix!);
+          : Text(suffix!, style: suffixStyle);
     }
 
     // Build the counter widgets
@@ -342,6 +362,8 @@ class ImprovedAnimatedFlipCounter extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: mainAxisAlignment,
+        crossAxisAlignment: CrossAxisAlignment.baseline,
+        textBaseline: TextBaseline.alphabetic,
         // RTL support: respect text direction for layout, but numbers are always LTR
         textDirection: textDirection,
         children: counterChildren,

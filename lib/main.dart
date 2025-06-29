@@ -456,6 +456,59 @@ class _WordCounterDemoState extends State<WordCounterDemo> {
 
             const SizedBox(height: 16),
 
+            // Different Text Styles Demo
+            _buildFeatureDemo(
+              'Custom Prefix/Suffix Styles',
+              Column(
+                children: [
+                  // Example 1: Different sizes
+                  AnimatedWordCounter(
+                    text: _textController.text,
+                    language: _selectedLanguage,
+                    prefix: 'Count: ',
+                    prefixTextStyle: const TextStyle(
+                      color: Colors.grey,
+                      fontSize: 12,
+                      fontWeight: FontWeight.normal,
+                    ),
+                    suffix: ' words',
+                    suffixTextStyle: const TextStyle(
+                      color: Colors.blue,
+                      fontSize: 14,
+                      fontStyle: FontStyle.italic,
+                    ),
+                    textStyle: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  // Example 2: Different colors and styles
+                  SimpleAnimatedWordCounter(
+                    text: _textController.text,
+                    language: _selectedLanguage,
+                    prefix: '📊 ',
+                    prefixTextStyle: const TextStyle(fontSize: 20),
+                    suffix: ' items analyzed',
+                    suffixTextStyle: const TextStyle(
+                      color: Colors.deepOrange,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 1.2,
+                    ),
+                    textStyle: const TextStyle(
+                      color: Colors.purple,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 16),
+
             // Improved Font Rendering
             _buildFeatureDemo(
               'Enhanced Font Rendering',

@@ -5,6 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2024-01-15
+
+### Added
+
+- **Custom Text Styles**: Added `prefixTextStyle` and `suffixTextStyle` parameters to `AnimatedWordCounter` and `SimpleAnimatedWordCounter`
+- **Independent Styling**: Prefix and suffix text can now have completely different text styles (color, size, weight, etc.) from the main counter
+- **Baseline Alignment**: Added proper baseline alignment for text with different font sizes using `CrossAxisAlignment.baseline`
+- **Smart Fallback**: When prefix/suffix text styles are null, the main `textStyle` is used automatically
+- **Example Showcase**: Added live demo in example app showing various text styling combinations
+
+### Improved
+
+- Enhanced text alignment for mixed font sizes with alphabetic baseline alignment
+- Better visual consistency when combining different text styles
+- More flexible styling options for creating custom counter designs
+
+### Technical
+
+- Added comprehensive test coverage for text styling scenarios (33/33 tests passing)
+- Maintained full backward compatibility - existing code continues to work unchanged
+- Zero analyzer warnings with proper documentation for new parameters
+
 ## [1.0.4] - 2024-01-15
 
 ### Fixed

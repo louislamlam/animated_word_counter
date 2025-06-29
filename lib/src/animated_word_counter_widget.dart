@@ -16,7 +16,9 @@ class AnimatedWordCounter extends StatefulWidget {
     this.curve = Curves.easeInOut,
     this.textStyle,
     this.prefix = '',
+    this.prefixTextStyle,
     this.suffix = ' words',
+    this.suffixTextStyle,
     this.fractionDigits = 0,
     this.thousandSeparator = ',',
     this.onCountChanged,
@@ -44,8 +46,14 @@ class AnimatedWordCounter extends StatefulWidget {
   /// Text to show before the counter
   final String prefix;
 
+  /// Text style for the prefix text. If null, uses the main textStyle.
+  final TextStyle? prefixTextStyle;
+
   /// Text to show after the counter
   final String suffix;
+
+  /// Text style for the suffix text. If null, uses the main textStyle.
+  final TextStyle? suffixTextStyle;
 
   /// Number of decimal places (usually 0 for word counts)
   final int fractionDigits;
@@ -132,7 +140,9 @@ class _AnimatedWordCounterState extends State<AnimatedWordCounter> {
                 curve: widget.curve,
                 textStyle: widget.textStyle ?? _defaultTextStyle(context),
                 prefix: widget.prefix,
+                prefixTextStyle: widget.prefixTextStyle,
                 suffix: widget.suffix,
+                suffixTextStyle: widget.suffixTextStyle,
                 fractionDigits: widget.fractionDigits,
                 thousandSeparator: widget.thousandSeparator,
                 improvedFontRendering: true,
@@ -211,7 +221,9 @@ class SimpleAnimatedWordCounter extends StatelessWidget {
     this.curve = Curves.easeInOut,
     this.textStyle,
     this.prefix = '',
+    this.prefixTextStyle,
     this.suffix = '',
+    this.suffixTextStyle,
   });
 
   final String text;
@@ -220,7 +232,9 @@ class SimpleAnimatedWordCounter extends StatelessWidget {
   final Curve curve;
   final TextStyle? textStyle;
   final String prefix;
+  final TextStyle? prefixTextStyle;
   final String suffix;
+  final TextStyle? suffixTextStyle;
 
   @override
   Widget build(BuildContext context) {
@@ -237,7 +251,9 @@ class SimpleAnimatedWordCounter extends StatelessWidget {
             curve: curve,
             textStyle: textStyle,
             prefix: prefix,
+            prefixTextStyle: prefixTextStyle,
             suffix: suffix,
+            suffixTextStyle: suffixTextStyle,
             fractionDigits: 0,
             improvedFontRendering: true,
             supportRtl: true, // Enable RTL support
